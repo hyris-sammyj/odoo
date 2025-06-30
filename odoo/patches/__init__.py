@@ -1,1 +1,1 @@
-import base64patch
+from . import base64patch
