@@ -93,7 +93,7 @@ _EXPR_OPCODES = _CONST_OPCODES.union(set(opmap[x] for x in [
     'CONTAINS_OP',
     'DICT_MERGE',
     # python 3.9 compatibility
-    'IS_OP,' 'DICT_MERGE', 'SET_UPDATE', 'DICT_UPDATE',
+    'IS_OP,' 'SET_UPDATE', 'DICT_UPDATE',
 ] if x in opmap))
 
 _SAFE_OPCODES = _EXPR_OPCODES.union(set(opmap[x] for x in [
@@ -116,7 +116,9 @@ _SAFE_OPCODES = _EXPR_OPCODES.union(set(opmap[x] for x in [
     'RAISE_VARARGS', 'LOAD_NAME', 'STORE_NAME', 'DELETE_NAME', 'LOAD_ATTR',
     'LOAD_FAST', 'STORE_FAST', 'DELETE_FAST', 'UNPACK_SEQUENCE',
     'LOAD_GLOBAL', # Only allows access to restricted globals
-    'RERAISE', 'JUMP_IF_NOT_EXC_MATCH',
+    'RERAISE', 'JUMP_IF_NOT_EXC_MATCH',,
+    # python 3.9 compatibility
+    'IS_OP,' 'SET_UPDATE', 'DICT_UPDATE', 'DICT_MERGE',
 ] if x in opmap))
 
 _logger = logging.getLogger(__name__)
