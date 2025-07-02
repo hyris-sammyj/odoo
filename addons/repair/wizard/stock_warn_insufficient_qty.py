@@ -6,9 +6,9 @@ from odoo import fields, models
 class StockWarnInsufficientQtyRepair(models.TransientModel):
     _name = 'stock.warn.insufficient.qty.repair'
     _inherit = 'stock.warn.insufficient.qty'
-    _description = 'Warn Insufficient Repair Quantity'
+    _description = 'Warn Insufficient Service Quantity'
 
-    repair_id = fields.Many2one('repair.order', string='Repair')
+    repair_id = fields.Many2one('repair.order', string='Service')
 
     def action_done(self):
         self.ensure_one()

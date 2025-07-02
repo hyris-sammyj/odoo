@@ -6,7 +6,7 @@
         <field name="name">repair.tree</field>
         <field name="model">repair.order</field>
         <field name="arch" type="xml">
-            <tree string="Repairs order" decoration-muted="state in ('done','cancel')" decoration-info="state=='draft'">
+            <tree string="Service order" decoration-muted="state in ('done','cancel')" decoration-info="state=='draft'">
                 <field name="name" />
                 <field name="product_id" />
                 <field name="partner_id"/>
@@ -22,21 +22,21 @@
         <field name="name">repair.form</field>
         <field name="model">repair.order</field>
         <field name="arch" type="xml">
-            <form string="Repair Order">
+            <form string="Service Order">
                <header>
                    <button name="action_send_mail" states="draft" string="Send Quotation" type="object"/>
                    <button name="print_repair_order" states="draft" string="Print Quotation" type="object"/>
-                   <button name="action_validate" states="draft" type="object" string="Confirm Repair" class="oe_highlight"/>
+                   <button name="action_validate" states="draft" type="object" string="Confirm Service" class="oe_highlight"/>
                    <button name="action_repair_start" attrs="{'invisible': ['&amp;', ('state','!=','confirmed'), '!', '&amp;', ('state','=','ready'), ('invoice_method','=','b4repair')]}"
-                    type="object" string="Start Repair" class="oe_highlight"/>
+                    type="object" string="Start Service" class="oe_highlight"/>
                    <button name="action_repair_cancel_draft" states="cancel" string="Set to Draft" type="object"/>
-                   <button name="action_repair_end" states="under_repair" type="object" string="End Repair" class="oe_highlight"/>
+                   <button name="action_repair_end" states="under_repair" type="object" string="End Service" class="oe_highlight"/>
                    <button name="action_repair_invoice_create" states="2binvoiced" type="object" string="Create Invoice" class="oe_highlight" groups="account.group_account_invoice"/>
-                   <button name="action_repair_cancel" string="Cancel Repair" type="object" attrs="{'invisible':['|',('invoice_method','!=','none'), ('state', 'not in',('confirmed','2binvoiced','ready','under_repair'))]}"/>
-                   <button name="action_repair_cancel" states="draft" type="object" string="Cancel Repair"/>
+                   <button name="action_repair_cancel" string="Cancel Service" type="object" attrs="{'invisible':['|',('invoice_method','!=','none'), ('state', 'not in',('confirmed','2binvoiced','ready','under_repair'))]}"/>
+                   <button name="action_repair_cancel" states="draft" type="object" string="Cancel Service"/>
                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done"/>
                </header>
-               <sheet string="Repairs order">
+               <sheet string="Service order">
                     <div class="oe_button_box" name="button_box">
                         <button name="action_created_invoice"
                             type="object"
@@ -76,7 +76,7 @@
                         <field name="operations" context="{'default_product_uom_qty': product_qty}">
                             <form string="Operations">
                                 <notebook>
-                                    <page string="Repair Line">
+                                    <page string="Service Line">
                                         <group>
                                             <group>
                                                 <field name="type"/>
@@ -230,12 +230,12 @@
           <field name="name">repair.select</field>
           <field name="model">repair.order</field>
           <field name="arch" type="xml">
-              <search string="Search Repair Orders">
-                  <field name="name" string="Repair Orders"/>
+              <search string="Search Service Orders">
+                  <field name="name" string="Service Orders"/>
                   <field name="state"/>
                   <filter string="Quotations" name="quotations" domain="[('state','=','draft')]"/>
                   <filter string="Confirmed" domain="[('state','=','confirmed')]" name="current" />
-                  <filter string="Ready To Repair" name="ready_to_repair" domain="[('state','=','ready')]"/>
+                  <filter string="Ready To Service" name="ready_to_repair" domain="[('state','=','ready')]"/>
                   <separator/>
                   <filter string="Invoiced" name="invoiced" domain="[('invoiced','=',True)]"/>
                   <field name="product_id"/>
@@ -266,7 +266,7 @@
 
 
          <record id="action_repair_order_tree" model="ir.actions.act_window">
-            <field name="name">Repair Orders</field>
+            <field name="name">Service Orders</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">repair.order</field>
             <field name="view_type">form</field>
@@ -287,7 +287,7 @@
             </field>
         </record>
 
-        <menuitem action="action_repair_order_tree" id="menu_repair_order" groups="stock.group_stock_user" name="Repairs" sequence="36"
+        <menuitem action="action_repair_order_tree" id="menu_repair_order" groups="stock.group_stock_user" name="Service" sequence="36"
             web_icon="repair,static/description/icon.png"/>
 
     </data>

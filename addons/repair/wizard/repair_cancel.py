@@ -7,7 +7,7 @@ from odoo.exceptions import UserError
 
 class RepairCancel(models.TransientModel):
     _name = 'repair.cancel'
-    _description = 'Cancel Repair'
+    _description = 'Cancel Service'
 
     @api.multi
     def cancel_repair(self):
@@ -17,7 +17,7 @@ class RepairCancel(models.TransientModel):
         if repair.invoiced or repair.invoice_method == 'none':
             repair.action_cancel()
         else:
-            raise UserError(_('Repair order is not invoiced.'))
+            raise UserError(_('Service order is not invoiced.'))
         return {'type': 'ir.actions.act_window_close'}
 
     @api.model
@@ -30,7 +30,7 @@ class RepairCancel(models.TransientModel):
         repair = self.env['repair.order'].browse(repair_id)
         if not repair.invoiced:
             res['arch'] = """
-                <form string="Cancel Repair">
+                <form string="Cancel Service">
                     <header>
                         <button name="cancel_repair" string="_Yes" type="object" class="btn-primary"/>
                         <button string="Cancel" class="btn-secondary" special="cancel"/>

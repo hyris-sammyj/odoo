@@ -3,11 +3,11 @@
 
 
 {
-    'name': 'Repairs',
+    'name': 'Service',
     'version': '1.0',
     'sequence': 200,
     'category': 'Manufacturing',
-    'summary': 'Repair damaged products',
+    'summary': 'Service damaged products',
     'description': """
 The aim is to have a complete module to manage all products repairs.
 ====================================================================
@@ -18,7 +18,7 @@ The following topics are covered by this module:
     * Impact for stocks
     * Invoicing (products and/or services)
     * Warranty concept
-    * Repair quotation report
+    * Service quotation report
     * Notes for the technician and for the final customer
 """,
     'depends': ['stock', 'sale_management', 'account'],

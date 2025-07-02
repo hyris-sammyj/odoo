@@ -13,7 +13,7 @@ class TestRepair(AccountingTestCase):
     def setUp(self):
         super(TestRepair, self).setUp()
 
-        self.Repair = self.env['repair.order']
+        self.Service = self.env['repair.order']
         self.ResUsers = self.env['res.users']
         self.RepairMakeInvoice = self.env['repair.order.make_invoice']
         self.res_group_user = self.env.ref('stock.group_stock_user')
@@ -23,13 +23,13 @@ class TestRepair(AccountingTestCase):
         self.repair_r2 = self.env.ref('repair.repair_r2')
 
         self.res_repair_user = self.ResUsers.create({
-            'name': 'Repair User',
+            'name': 'Service User',
             'login': 'maru',
             'email': 'repair_user@yourcompany.com',
             'groups_id': [(6, 0, [self.res_group_user.id])]})
 
         self.res_repair_manager = self.ResUsers.create({
-            'name': 'Repair Manager',
+            'name': 'Service Manager',
             'login': 'marm',
             'email': 'repair_manager@yourcompany.com',
             'groups_id': [(6, 0, [self.res_group_manager.id])]})
@@ -76,20 +76,20 @@ class TestRepair(AccountingTestCase):
     def test_00_repair_afterinv(self):
         repair = self._create_simple_repair_order('after_repair')
         self._create_simple_operation(repair_id=repair.id, qty=1.0, price_unit=50.0)
-        # I confirm Repair order taking Invoice Method 'After Repair'.
+        # I confirm Service order taking Invoice Method 'After Service'.
         repair.sudo(self.res_repair_user.id).action_repair_confirm()
 
         # I check the state is in "Confirmed".
-        self.assertEqual(repair.state, "confirmed", 'Repair order should be in "Confirmed" state.')
+        self.assertEqual(repair.state, "confirmed", 'Service order should be in "Confirmed" state.')
         repair.action_repair_start()
 
-        # I check the state is in "Under Repair".
-        self.assertEqual(repair.state, "under_repair", 'Repair order should be in "Under_repair" state.')
+        # I check the state is in "Under Service".
+        self.assertEqual(repair.state, "under_repair", 'Service order should be in "Under_repair" state.')
 
-        # Repairing process for product is in Done state and I end Repair process by clicking on "End Repair" button.
+        # Repairing process for product is in Done state and I end Service process by clicking on "End Service" button.
         repair.action_repair_end()
 
-        # I define Invoice Method 'After Repair' option in this Repair order.so I create invoice by clicking on "Make Invoice" wizard.
+        # I define Invoice Method 'After Service' option in this Service order.so I create invoice by clicking on "Make Invoice" wizard.
         make_invoice = self.RepairMakeInvoice.create({
             'group': True})
         # I click on "Create Invoice" button of this wizard to make invoice.
@@ -100,19 +100,19 @@ class TestRepair(AccountingTestCase):
         }
         make_invoice.with_context(context).make_invoices()
 
-        # I check that invoice is created for this Repair order.
+        # I check that invoice is created for this Service order.
         self.assertEqual(len(repair.invoice_id), 1, "No invoice exists for this repair order")
         self.assertEqual(len(repair.move_id.move_line_ids[0].consume_line_ids), 1, "Consume lines should be set")
 
     def test_01_repair_b4inv(self):
         repair = self._create_simple_repair_order('b4repair')
-        # I confirm Repair order for Invoice Method 'Before Repair'.
+        # I confirm Service order for Invoice Method 'Before Service'.
         repair.sudo(self.res_repair_user.id).action_repair_confirm()
 
         # I click on "Create Invoice" button of this wizard to make invoice.
         repair.action_repair_invoice_create()
 
-        # I check that invoice is created for this Repair order.
+        # I check that invoice is created for this Service order.
         self.assertEqual(len(repair.invoice_id), 1, "No invoice exists for this repair order")
 
     def test_02_repair_noneinv(self):
@@ -127,16 +127,16 @@ class TestRepair(AccountingTestCase):
 
         self.assertEqual(repair.amount_total, 26, "Amount_total should be 26")
 
-        # I confirm Repair order for Invoice Method 'No Invoice'.
+        # I confirm Service order for Invoice Method 'No Invoice'.
         repair.sudo(self.res_repair_user.id).action_repair_confirm()
 
-        # I start the repairing process by clicking on "Start Repair" button for Invoice Method 'No Invoice'.
+        # I start the repairing process by clicking on "Start Service" button for Invoice Method 'No Invoice'.
         repair.action_repair_start()
 
-        # I check its state which is in "Under Repair".
-        self.assertEqual(repair.state, "under_repair", 'Repair order should be in "Under_repair" state.')
+        # I check its state which is in "Under Service".
+        self.assertEqual(repair.state, "under_repair", 'Service order should be in "Under_repair" state.')
 
-        # Repairing process for product is in Done state and I end this process by clicking on "End Repair" button.
+        # Repairing process for product is in Done state and I end this process by clicking on "End Service" button.
         repair.action_repair_end()
 
         self.assertEqual(repair.move_id.location_id.id, self.env.ref('stock.stock_location_stock').id,

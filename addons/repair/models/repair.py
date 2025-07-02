@@ -15,9 +15,9 @@ class StockMove(models.Model):
     repair_id = fields.Many2one('repair.order')
 
 
-class Repair(models.Model):
+class Service(models.Model):
     _name = 'repair.order'
-    _description = 'Repair Order'
+    _description = 'Service Order'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'create_date desc'
 
@@ -29,12 +29,12 @@ class Repair(models.Model):
         return False
 
     name = fields.Char(
-        'Repair Reference',
+        'Service Reference',
         default=lambda self: self.env['ir.sequence'].next_by_code('repair.order'),
         copy=False, required=True,
         states={'confirmed': [('readonly', True)]})
     product_id = fields.Many2one(
-        'product.product', string='Product to Repair',
+        'product.product', string='Product to Service',
         readonly=True, required=True, states={'draft': [('readonly', False)]})
     product_qty = fields.Float(
         'Product Quantity',
@@ -56,15 +56,15 @@ class Repair(models.Model):
         ('draft', 'Quotation'),
         ('cancel', 'Cancelled'),
         ('confirmed', 'Confirmed'),
-        ('under_repair', 'Under Repair'),
-        ('ready', 'Ready to Repair'),
+        ('under_repair', 'Under Service'),
+        ('ready', 'Ready to Service'),
         ('2binvoiced', 'To be Invoiced'),
         ('invoice_except', 'Invoice Exception'),
         ('done', 'Repaired')], string='Status',
         copy=False, default='draft', readonly=True, track_visibility='onchange',
         help="* The \'Draft\' status is used when a user is encoding a new and unconfirmed repair order.\n"
              "* The \'Confirmed\' status is used when a user confirms the repair order.\n"
-             "* The \'Ready to Repair\' status is used to start to repairing, user can start repairing only after repair order is confirmed.\n"
+             "* The \'Ready to Service\' status is used to start to repairing, user can start repairing only after repair order is confirmed.\n"
              "* The \'To be Invoiced\' status is used to generate the invoice before or after repairing done.\n"
              "* The \'Done\' status is set when repairing is completed.\n"
              "* The \'Cancelled\' status is used when user cancel repair order.")
@@ -89,11 +89,11 @@ class Repair(models.Model):
     partner_invoice_id = fields.Many2one('res.partner', 'Invoicing Address')
     invoice_method = fields.Selection([
         ("none", "No Invoice"),
-        ("b4repair", "Before Repair"),
-        ("after_repair", "After Repair")], string="Invoice Method",
+        ("b4repair", "Before Service"),
+        ("after_repair", "After Service")], string="Invoice Method",
         default='none', index=True, readonly=True, required=True,
         states={'draft': [('readonly', False)]},
-        help='Selecting \'Before Repair\' or \'After Repair\' will allow you to generate invoice before or after the repair is done respectively. \'No invoice\' means you don\'t want to generate invoice for this repair order.')
+        help='Selecting \'Before Service\' or \'After Service\' will allow you to generate invoice before or after the repair is done respectively. \'No invoice\' means you don\'t want to generate invoice for this repair order.')
     invoice_id = fields.Many2one(
         'account.invoice', 'Invoice',
         copy=False, readonly=True, track_visibility="onchange")
@@ -153,7 +153,7 @@ class Repair(models.Model):
         self.amount_total = self.pricelist_id.currency_id.round(self.amount_untaxed + self.amount_tax)
 
     _sql_constraints = [
-        ('name', 'unique (name)', 'The name of the Repair Order must be unique!'),
+        ('name', 'unique (name)', 'The name of the Service Order must be unique!'),
     ]
 
     @api.onchange('product_id')
@@ -193,7 +193,7 @@ class Repair(models.Model):
     @api.multi
     def action_repair_cancel_draft(self):
         if self.filtered(lambda repair: repair.state != 'cancel'):
-            raise UserError(_("Repair must be canceled in order to reset it to draft."))
+            raise UserError(_("Service must be canceled in order to reset it to draft."))
         self.mapped('operations').write({'state': 'draft'})
         return self.write({'state': 'draft'})
 
@@ -223,7 +223,7 @@ class Repair(models.Model):
 
     @api.multi
     def action_repair_confirm(self):
-        """ Repair order state is set to 'To be invoiced' when invoice method
+        """ Service order state is set to 'To be invoiced' when invoice method
         is 'Before repair' else state becomes 'Confirmed'.
         @param *arg: Arguments
         @return: True
@@ -398,11 +398,11 @@ class Repair(models.Model):
 
     @api.multi
     def action_repair_start(self):
-        """ Writes repair order state to 'Under Repair'
+        """ Writes repair order state to 'Under Service'
         @return: True
         """
         if self.filtered(lambda repair: repair.state not in ['confirmed', 'ready']):
-            raise UserError(_("Repair must be confirmed before starting reparation."))
+            raise UserError(_("Service must be confirmed before starting reparation."))
         self.mapped('operations').write({'state': 'confirmed'})
         return self.write({'state': 'under_repair'})
 
@@ -413,7 +413,7 @@ class Repair(models.Model):
         @return: True
         """
         if self.filtered(lambda repair: repair.state != 'under_repair'):
-            raise UserError(_("Repair must be under repair in order to end reparation."))
+            raise UserError(_("Service must be under repair in order to end reparation."))
         for repair in self:
             repair.write({'repaired': True})
             vals = {'state': 'done'}
@@ -430,7 +430,7 @@ class Repair(models.Model):
 
         """
         if self.filtered(lambda repair: not repair.repaired):
-            raise UserError(_("Repair must be repaired in order to make the product moves."))
+            raise UserError(_("Service must be repaired in order to make the product moves."))
         res = {}
         precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
         Move = self.env['stock.move']
@@ -498,11 +498,11 @@ class Repair(models.Model):
 
 class RepairLine(models.Model):
     _name = 'repair.line'
-    _description = 'Repair Line (parts)'
+    _description = 'Service Line (parts)'
 
     name = fields.Text('Description', required=True)
     repair_id = fields.Many2one(
-        'repair.order', 'Repair Order Reference',
+        'repair.order', 'Service Order Reference',
         index=True, ondelete='cascade')
     type = fields.Selection([
         ('add', 'Add'),
@@ -606,7 +606,7 @@ class RepairLine(models.Model):
                 warning = {
                     'title': _('No pricelist found.'),
                     'message':
-                        _('You have to select a pricelist in the Repair form !\n Please set one before choosing a product.')}
+                        _('You have to select a pricelist in the Service form !\n Please set one before choosing a product.')}
                 return {'warning': warning}
             else:
                 self._onchange_product_uom()
@@ -629,10 +629,10 @@ class RepairLine(models.Model):
 
 class RepairFee(models.Model):
     _name = 'repair.fee'
-    _description = 'Repair Fees'
+    _description = 'Service Fees'
 
     repair_id = fields.Many2one(
-        'repair.order', 'Repair Order Reference',
+        'repair.order', 'Service Order Reference',
         index=True, ondelete='cascade', required=True)
     name = fields.Text('Description', index=True, required=True)
     product_id = fields.Many2one('product.product', 'Product')
@@ -684,7 +684,7 @@ class RepairFee(models.Model):
             warning = {
                 'title': _('No pricelist found.'),
                 'message':
-                    _('You have to select a pricelist in the Repair form !\n Please set one before choosing a product.')}
+                    _('You have to select a pricelist in the Service form !\n Please set one before choosing a product.')}
             return {'warning': warning}
         else:
             self._onchange_product_uom()
