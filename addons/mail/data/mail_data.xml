@@ -71,7 +71,9 @@
                                     </t>
                                 </td>
                                 <td valign="center" align="right">
-                                    <img t-att-src="image_data_uri(doc.company_id.logo)"
+                                    <img
+                                        t-attf-src="data:image/*;base64,{{company.logo}}"
+                                        t-att-alt="company.name"
                                         style="padding: 0px; margin: 0px; height: 48px;" />
                                 </td>
                             </tr>
@@ -97,17 +99,6 @@
                     </t>
                 </ul>
                 <div t-if="signature" t-raw="signature" style="font-size: 13px;" />
-                <p style="color: #555555; margin-top:32px;"> Sent <span t-if="company.name"> by <a
-                            t-if="website_url" t-att-href="website_url"
-                            style="text-decoration:none; color: #875A7B;">
-                            <span t-esc="company.name" />
-                        </a>
-    <span
-                            t-if="not website_url" t-esc="company.name" />
-                    </span>
-                    using <a target="_blank"
-                        href="https://www.odoo.com?utm_source=db&amp;utm_medium=email"
-                        style="text-decoration:none; color: #875A7B;">Odoo</a>. </p>
             </div>
         </template>
 
@@ -130,7 +121,9 @@
                                             </span>
                                         </td>
                                         <td valign="middle" align="right">
-                                            <img t-att-src="image_data_uri(doc.company_id.logo)"
+                                            <img
+                                                t-attf-src="data:image/*;base64,{{company.logo}}"
+                                                t-att-alt="company.name"
                                                 style="padding: 0px; margin: 0px; height: 48px;" />
                                         </td>
                                     </tr>
@@ -215,7 +208,8 @@
                                                 </td>
                                                 <td valign="middle" align="right">
                                                     <img
-                                                        t-att-src="image_data_uri(doc.company_id.logo)"
+                                                        t-attf-src="data:image/*;base64,{{company.logo}}"
+                                                        t-att-alt="company.name"
                                                         style="padding: 0px; margin: 0px; height: 48px;" />
                                                 </td>
                                             </tr>
@@ -310,7 +304,8 @@
                                                 </td>
                                                 <td valign="middle" align="right">
                                                     <img
-                                                        t-att-src="image_data_uri(doc.company_id.logo)"
+                                                        t-attf-src="data:image/*;base64,{{company.logo}}"
+                                                        t-att-alt="company.name"
                                                         style="padding: 0px; margin: 0px; height: 48px;" />
                                                 </td>
                                             </tr>
