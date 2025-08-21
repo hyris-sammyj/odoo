@@ -115,7 +115,7 @@
                         <t t-esc="message.record_name"/>
                     </span>
                 </td><td valign="middle" align="right">
-                    <!-- <img t-att-src="'/logo.png?company=%s' % (company.id or 0)" style="padding: 0px; margin: 0px; height: auto; width: 80px;" t-att-alt="'%s' % company.name"/> -->
+                    <img t-att-src="image_data_uri(doc.company_id.logo)" style="padding: 0px; margin: 0px; height: 48px;"/>
                 </td></tr>
             </table>
         </td>
@@ -202,6 +202,8 @@
         </td>
     </tr>
 </tbody>
+</table>
+</table>
         </template>
 
         <!-- Information on model to use this notification template
@@ -278,6 +280,8 @@
         </td>
     </tr>
 </tbody>
+</table>
+</table>
         </template>
 
         <!-- Discuss utility templates for notifications -->
