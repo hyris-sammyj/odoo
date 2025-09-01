@@ -688,7 +688,10 @@ def guess(method):
         return method
 
     # introspection on argument names to determine api style
-    args, vname, kwname, defaults = getargspec(method)
+    try:
+        args, vname, kwname, defaults = getargspec(method)
+    except BaseException as e:
+        raise ValueError("Error in determine method %s decorations - %s" % (str(method), str(e)))
     names = tuple(args) + (None,) * 4
 
     if names[0] == 'self':
